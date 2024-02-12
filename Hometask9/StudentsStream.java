@@ -1,4 +1,4 @@
-package Hometask9.Students;
+package Hometask9;
 
 import java.util.Arrays;
 import java.util.Collection;
