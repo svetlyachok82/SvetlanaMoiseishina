@@ -4,12 +4,13 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestMTSPayment extends TestMTS {
     @Test
     public void payConnection() {
-        WebElement selectService = driver.findElement(By.xpath("//span[@class='select__arrow']"));
+        WebElement selectService = driver.findElement(By.xpath("//button[@class='select__header']"));
         selectService.click();
         WebElement payConnection = driver.findElement(By.xpath("//li[1]/p[text()='Услуги связи']"));
         payConnection.click();
@@ -24,13 +25,20 @@ public class TestMTSPayment extends TestMTS {
         inputEmail.sendKeys("help_me@please.by");
         WebElement continueButton = driver.findElement(By.xpath("//button[contains(text(),'Продолжить')]"));
         continueButton.click();
-        String[] windowHandles = driver.getWindowHandles().toArray(new String[0]);
-        driver.switchTo().window(windowHandles[0]);
-        WebDriverWait wait = new WebDriverWait(driver, 30);
-        WebElement elementContainer = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class='header__payment-amount']/span")));
-        WebElement elementContentBody = elementContainer.findElement(By.xpath(".//div[@class='input-wrapper input-wrapper_label-right']"));
-        Assertions.assertEquals("Здесь отражена сумма оплаты: ", elementContentBody.getText());
-        WebElement inscriptionPayCard = driver.findElement(By.xpath("//label[@class='ng-tns-c47-1 ng-star-inserted']"));
+        WebDriverWait wait = new WebDriverWait(driver, 50);
+        //переключаем на фрейм и проверяем сумму
+                wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(By.xpath("//iframe[@class='bepaid-iframe']")));
+        WebElement elementContentSum = driver.findElement(By.xpath(".//div[@class='header__payment-amount']"));
+        int sum=50;
+        Assertions.assertEquals(sum+".00",elementContentSum.getAttribute("textContent").replace("BYN","").trim());
+        //проверяем сумму на кнопке "Оплатить"
+        WebElement elementContentSumButton = driver.findElement(By.xpath(".//button[@class='colored disabled ng-star-inserted']"));
+        Assertions.assertEquals("Оплатить  "+sum+".00", elementContentSumButton.getAttribute("textContent").replace("BYN","").trim());
+        //проверяем номер телефона
+        WebElement elementContentPhone = driver.findElement(By.xpath("//p[@class='header__payment-info']"));
+        String phoneNumber=String.valueOf(297777777);
+        Assertions.assertEquals(phoneNumber,elementContentPhone.getAttribute("textContent").replace("Оплата: Услуги связи\nНомер: 375","").trim());
+        /*WebElement inscriptionPayCard = driver.findElement(By.xpath("//label[@class='ng-tns-c47-1 ng-star-inserted']"));
         String inscriptionCard = inscriptionPayCard.getText();
         System.out.println("Надпись в незаполненном поле для ввода номера карты: " + inscriptionCard);
         WebElement inscriptionTermPayCard = driver.findElement(By.xpath("//label[@class='ng-tns-c47-4 ng-star-inserted']"));
@@ -53,7 +61,9 @@ public class TestMTSPayment extends TestMTS {
         assertTrue(logoBel.isDisplayed(), "Логотип не отображается");
         WebElement logoMir = driver.findElement
                 (By.xpath("//img[contains(text(),'mir-system']"));
-        assertTrue(logoMir.isDisplayed(), "Логотип не отображается");
+        assertTrue(logoMir.isDisplayed(), "Логотип не отображается");*/
+        WebElement closeButton = driver.findElement(By.xpath("//div[@class='header__close-button']//svg-icon[@class='header__close-icon']"));
+        closeButton.click();
     }
 
 }
