@@ -25,7 +25,7 @@ public class TestMTSPayment extends TestMTS {
         inputEmail.sendKeys("help_me@please.by");
         WebElement continueButton = driver.findElement(By.xpath("//button[contains(text(),'Продолжить')]"));
         continueButton.click();
-        WebDriverWait wait = new WebDriverWait(driver, 50);
+        WebDriverWait wait = new WebDriverWait(driver, 20);
         //переключаем на фрейм и проверяем сумму
                 wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(By.xpath("//iframe[@class='bepaid-iframe']")));
         WebElement elementContentSum = driver.findElement(By.xpath(".//div[@class='header__payment-amount']"));
@@ -37,8 +37,9 @@ public class TestMTSPayment extends TestMTS {
         //проверяем номер телефона
         WebElement elementContentPhone = driver.findElement(By.xpath("//p[@class='header__payment-info']"));
         String phoneNumber=String.valueOf(297777777);
-        Assertions.assertEquals(phoneNumber,elementContentPhone.getAttribute("textContent").replace("Оплата: Услуги связи\nНомер: 375","").trim());
-        /*WebElement inscriptionPayCard = driver.findElement(By.xpath("//label[@class='ng-tns-c47-1 ng-star-inserted']"));
+        Assertions.assertEquals("Оплата: Услуги связи\nНомер:375"+phoneNumber,elementContentPhone.getAttribute("textContent").replace("Оплата: Услуги связи\nНомер: 375","").trim());
+        //проверяем надписи в незаполненных полях ввода данных карты
+        WebElement inscriptionPayCard = driver.findElement(By.xpath("//label[@class='ng-tns-c47-1 ng-star-inserted']"));
         String inscriptionCard = inscriptionPayCard.getText();
         System.out.println("Надпись в незаполненном поле для ввода номера карты: " + inscriptionCard);
         WebElement inscriptionTermPayCard = driver.findElement(By.xpath("//label[@class='ng-tns-c47-4 ng-star-inserted']"));
@@ -50,18 +51,23 @@ public class TestMTSPayment extends TestMTS {
         WebElement inscriptionNameHolderPayCard = driver.findElement(By.xpath("//label[@class='ng-tns-c47-3 ng-star-inserted']"));
         String inscriptionName = inscriptionNameHolderPayCard.getText();
         System.out.println("Надпись в незаполненном поле для ввода имени владельца карты: " + inscriptionName);
+        //определяем наличие иконок платёжных систем
         WebElement logoVisa = driver.findElement
-                (By.xpath("//img[contains(text(),'visa-system']"));
-        assertTrue(logoVisa.isDisplayed(), "Логотип не отображается");
+                (By.xpath("//div[@class=\"cards-brands cards-brands__container ng-tns-c53-0 ng-trigger ng-trigger-brandsState ng-star-inserted\"]/img[2]"));
+        wait.until(ExpectedConditions.visibilityOf(logoVisa));
+        Assertions.assertTrue(logoVisa.isDisplayed());
         WebElement logoMaster = driver.findElement
-                (By.xpath("//img[contains(text(),'mastercard-system']"));
-        assertTrue(logoMaster.isDisplayed(), "Логотип не отображается");
+                (By.xpath("//div[@class=\"cards-brands cards-brands__container ng-tns-c53-0 ng-trigger ng-trigger-brandsState ng-star-inserted\"]/img[1]"));
+        wait.until(ExpectedConditions.visibilityOf(logoMaster));
+        Assertions.assertTrue(logoMaster.isDisplayed());
         WebElement logoBel = driver.findElement
-                (By.xpath("//img[contains(text(),'belcart-system']"));
-        assertTrue(logoBel.isDisplayed(), "Логотип не отображается");
+                (By.xpath("//div[@class=\"cards-brands cards-brands__container ng-tns-c53-0 ng-trigger ng-trigger-brandsState ng-star-inserted\"]/img[3]"));
+        wait.until(ExpectedConditions.visibilityOf(logoBel));
+        Assertions.assertTrue(logoBel.isDisplayed());
         WebElement logoMir = driver.findElement
-                (By.xpath("//img[contains(text(),'mir-system']"));
-        assertTrue(logoMir.isDisplayed(), "Логотип не отображается");*/
+                (By.xpath("//div[@class=\"cards-brands cards-brands_random ng-tns-c53-0 ng-star-inserted\"]/img[1]"));
+        wait.until(ExpectedConditions.visibilityOf(logoMir));
+        Assertions.assertTrue(logoMir.isDisplayed());
         WebElement closeButton = driver.findElement(By.xpath("//div[@class='header__close-button']//svg-icon[@class='header__close-icon']"));
         closeButton.click();
     }
